@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🌿 Light Mode (default) */
+body {
+  @apply bg-[#f7f9f7] text-gray-800 font-sans transition-colors duration-300;
+}
+
+/* 🌑 Dark Mode */
+body.dark {
+  @apply bg-[#121512] text-white;
+}
+
+/* Links */
+a {
+  @apply text-green-700 hover:text-green-800 transition-colors;
+}
+
+/* Smooth background transitions for sections & cards */
+section, .product-card, .category-circle {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  50% { transform: translateX(100%) rotate(30deg); }
+  100% { transform: translateX(-100%) rotate(30deg); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-shine { animation: shine 3s infinite; }
+.animate-slideDown { animation: slideDown 0.3s ease; }
+.animate-fadeIn { animation: fadeIn 0.3s ease; }
+
+/* Swiper Slider Overrides */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #16a34a !important; /* Tailwind green-600 */
+  background: rgba(255, 255, 255, 0.8) !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+}
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  color: #15803d !important; /* Tailwind green-700 */
+  transform: scale(1.1);
+}
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+}
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.8) !important;
+  opacity: 1 !important;
+  width: 10px !important;
+  height: 10px !important;
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  background: #16a34a !important;
+  transform: scale(1.3);
+}
