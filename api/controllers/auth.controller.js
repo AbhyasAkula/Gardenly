@@ -1,4 +1,8 @@
 import User from "../models/user.model.js";
+import {
+  USER_ROLES,
+  PUBLIC_SIGNUP_ROLE_VALUES,
+} from "../models/user.model.js";
 import Community from "../models/community.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -48,10 +52,12 @@ export const signup = async (req, res, next) => {
     if (!passwordRegex.test(password)) return next(errorHandler(400, "Password must be 8+ chars with uppercase, number, special char"));
     if (!emailRegex.test(email)) return next(errorHandler(400, "Invalid email format"));
     if (!mobileRegex.test(mobile)) return next(errorHandler(400, "Mobile must be 10 digits"));
-    if (!["Buyer", "Seller", "Admin", "Expert"].includes(role)) return next(errorHandler(400, "Invalid role"));
+    if (!PUBLIC_SIGNUP_ROLE_VALUES.includes(role)) {
+      return next(errorHandler(400, "Invalid role"));
+    }
 
     let finalExpertise = "General";
-    if (role === "Expert") {
+    if (role === USER_ROLES.EXPERT) {
       const allowed = ["General", "Technical", "Billing"];
       if (!expertise || !allowed.includes(expertise)) return next(errorHandler(400, "Expertise required for Expert role"));
       finalExpertise = expertise;
@@ -191,7 +197,9 @@ export const googleSignin = async (req, res, next) => {
     let user = await User.findOne({ email });
 
     if (!user) {
-      const safeRole = ["Buyer", "Seller", "Admin", "Expert"].includes(role) ? role : "Buyer";
+      const safeRole = PUBLIC_SIGNUP_ROLE_VALUES.includes(role)
+        ? role
+        : USER_ROLES.BUYER;
       const emailPrefix = (email.split("@")[0] || "user").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 12);
       let username = `${emailPrefix || "user"}_${Math.floor(100 + Math.random() * 900)}`;
       while (await User.findOne({ username })) username = `${emailPrefix || "user"}_${Math.floor(100 + Math.random() * 900)}`;
@@ -201,7 +209,12 @@ export const googleSignin = async (req, res, next) => {
 
       const tempPassword = bcrypt.hashSync(`google_${Date.now()}_${Math.random()}`, 10);
         user = await User.create({
-          username, email, password: tempPassword, role: safeRole, mobile, expertise: safeRole === "Expert" ? "General" : "General",
+          username,
+          email,
+          password: tempPassword,
+          role: safeRole,
+          mobile,
+          expertise: safeRole === USER_ROLES.EXPERT ? "General" : "General",
           isEmailVerified: true // Google accounts are considered verified
         });
 

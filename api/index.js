@@ -60,6 +60,13 @@ app.use("/api-docs", createSwaggerRouter());
 app.get("/api/redis-health", async (req, res) => {
   const { getRedisClient } = await import("./utils/cache.js");
   const client = getRedisClient();
+  if (!client) {
+    return res.status(503).json({
+      success: false,
+      status: "Unavailable",
+      error: "Redis unavailable, continuing without cache",
+    });
+  }
   try {
     const ping = await client.ping();
     res.json({ success: true, status: "Connected", ping });
@@ -143,4 +150,3 @@ async function startServer() {
 
 startServer();
 export { upload };
-

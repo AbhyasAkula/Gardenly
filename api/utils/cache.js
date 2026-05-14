@@ -4,9 +4,20 @@ let redisClient;
 let isRedisConnected = false;
 
 export const connectRedis = async () => {
+  if (!process.env.REDIS_URL) {
+    console.warn("Redis disabled");
+    redisClient = undefined;
+    isRedisConnected = false;
+    return false;
+  }
+
   try {
     redisClient = createClient({
-      url: process.env.REDIS_URL || "redis://localhost:6379",
+      url: process.env.REDIS_URL,
+      socket: {
+        connectTimeout: 5000,
+        reconnectStrategy: false,
+      },
     });
 
     redisClient.on("error", (err) => {
@@ -20,9 +31,13 @@ export const connectRedis = async () => {
     });
 
     await redisClient.connect();
+    return true;
   } catch (err) {
+    console.warn("Redis unavailable, continuing without cache");
     console.error("Failed to connect to Redis:", err);
+    redisClient = undefined;
     isRedisConnected = false;
+    return false;
   }
 };
 

@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header";
 import { SocketProvider } from "./context/SocketContext";
 
@@ -35,6 +41,17 @@ import AdminCustomRequests from "./pages/AdminCustomRequests";
 import Footer from "./components/Footer";
 
 function PublicLayout() {
+  const { pathname } = useLocation();
+  const hideFooterRoutes = new Set([
+    "/signin",
+    "/signup",
+    "/sign-in",
+    "/sign-up",
+    "/login",
+    "/register",
+  ]);
+  const shouldHideFooter = hideFooterRoutes.has(pathname);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -48,7 +65,11 @@ function PublicLayout() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/register" element={<SignUp />} />
           <Route path="/expert-support" element={<ExpertSupport />} />
           <Route path="/expert-dashboard" element={<ExpertDashboard />} />
           <Route path="/cart" element={<Cart />} />
@@ -58,7 +79,7 @@ function PublicLayout() {
           <Route path="/custom-requests" element={<CustomRequests />} />
         </Routes>
       </main>
-      <Footer />
+      {!shouldHideFooter && <Footer />}
     </div>
   );
 }
@@ -88,4 +109,4 @@ export default function App() {
       </SocketProvider>
     </BrowserRouter>
   );
-}
+}

@@ -1,6 +1,20 @@
 // api/models/user.model.js
 import mongoose from "mongoose";
 
+export const USER_ROLES = Object.freeze({
+  BUYER: "Buyer",
+  SELLER: "Seller",
+  ADMIN: "Admin",
+  EXPERT: "Expert",
+});
+
+export const USER_ROLE_VALUES = Object.values(USER_ROLES);
+export const PUBLIC_SIGNUP_ROLE_VALUES = [
+  USER_ROLES.BUYER,
+  USER_ROLES.SELLER,
+  USER_ROLES.EXPERT,
+];
+
 const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true },
@@ -9,7 +23,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ["Buyer", "Seller", "Admin", "Expert"],
+      enum: USER_ROLE_VALUES,
     },
     mobile: { type: String, required: true, unique: true },
     expertise: {
