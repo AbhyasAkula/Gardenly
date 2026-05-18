@@ -12,6 +12,17 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
+const getAuthCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
+    partitioned: isProduction,
+  };
+};
+
 router.post("/signup", signup);
 router.post("/verify-email", verifyEmail);
 router.post("/signin", signin);
@@ -20,12 +31,7 @@ router.post("/google", googleSignin);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/logout", (req, res) => {
-  const isProduction = process.env.NODE_ENV === "production";
-  res.clearCookie("access_token", {
-    httpOnly: true,
-    sameSite: isProduction ? "none" : "lax",
-    secure: isProduction,
-  });
+  res.clearCookie("access_token", getAuthCookieOptions());
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 

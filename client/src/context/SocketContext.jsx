@@ -9,7 +9,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+    const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
     const newSocket = io(backendUrl, { withCredentials: true });
     setSocket(newSocket);
     return () => newSocket.close();

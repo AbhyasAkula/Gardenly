@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { jwtDecode } from "jwt-decode";
+import { AUTH_TOKEN_KEY } from "../utils/authFetch";
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -37,6 +38,7 @@ export default function AuthProvider({ children }) {
 
   const login = (token) => {
     try {
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
       const decoded = jwtDecode(token);
       setUser({
         id: decoded.id,
@@ -55,6 +57,7 @@ export default function AuthProvider({ children }) {
       console.error("Logout failed", err);
     }
 
+    localStorage.removeItem(AUTH_TOKEN_KEY);
     setUser(null);
   };
 

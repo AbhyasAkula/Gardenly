@@ -12,6 +12,18 @@ import { sendOtpMail, sendSignupVerificationMail, send2FAMail } from "../utils/m
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+const getAuthCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    partitioned: isProduction,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+};
+
 const buildAuthResponse = (res, user) => {
   const token = jwt.sign(
     { id: user._id, username: user.username, role: user.role.toLowerCase() },
@@ -21,15 +33,8 @@ const buildAuthResponse = (res, user) => {
 
   const { password: _, ...userWithoutPassword } = user._doc;
 
-  const isProduction = process.env.NODE_ENV === "production";
-
   return res
-    .cookie("access_token", token, {
-      httpOnly: true,
-      secure: isProduction,           // HTTPS only in production
-      sameSite: isProduction ? "none" : "lax", // "none" required for cross-domain (Render+Vercel)
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    .cookie("access_token", token, getAuthCookieOptions())
     .status(200)
     .json({ success: true, token, user: userWithoutPassword });
 };

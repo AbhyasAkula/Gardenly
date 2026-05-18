@@ -39,6 +39,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const googleBtnRef = useRef(null);
   const roleRef = useRef("");
+  const backendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -99,7 +100,7 @@ export default function SignIn() {
         callback: async (response) => {
           try {
             setError("");
-            const res = await fetch((import.meta.env.VITE_BACKEND_URL || '').trim() + "/api/auth/google", {
+            const res = await fetch(backendUrl + "/api/auth/google", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               credentials: "include",
@@ -157,7 +158,7 @@ export default function SignIn() {
       return setError("Please fill all fields");
 
     try {
-      const res = await fetch((import.meta.env.VITE_BACKEND_URL || '').trim() + "/api/auth/signin", {
+      const res = await fetch(backendUrl + "/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -193,7 +194,10 @@ export default function SignIn() {
     setError("");
     if (!otp) return setError("Please enter the OTP");
 
-    const endpoint = authStep === "VERIFY_EMAIL" ? "/api/auth/verify-email" : "/api/auth/verify-2fa";
+    const endpoint =
+      authStep === "VERIFY_EMAIL"
+        ? backendUrl + "/api/auth/verify-email"
+        : backendUrl + "/api/auth/verify-2fa";
     
     try {
       const res = await fetch(endpoint, {
@@ -227,7 +231,7 @@ export default function SignIn() {
     if (forgotStep === 1) {
       if (!forgotEmail) return setForgotError("Email is required");
       try {
-        const res = await fetch((import.meta.env.VITE_BACKEND_URL || '').trim() + "/api/auth/forgot-password", {
+        const res = await fetch(backendUrl + "/api/auth/forgot-password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: forgotEmail }),
@@ -243,7 +247,7 @@ export default function SignIn() {
       if (!forgotOtp || !newPassword)
         return setForgotError("OTP and new password required");
       try {
-        const res = await fetch((import.meta.env.VITE_BACKEND_URL || '').trim() + "/api/auth/reset-password", {
+        const res = await fetch(backendUrl + "/api/auth/reset-password", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: forgotEmail, otp: forgotOtp, newPassword }),
