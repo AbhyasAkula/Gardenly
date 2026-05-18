@@ -13,6 +13,9 @@ dotenv.config({ path: path.join(__dirname, "../../.env") });
 // Read and sanitize env values
 const emailUser = process.env.EMAIL_USER?.trim();
 const emailPass = process.env.EMAIL_PASS?.trim();
+const emailHost = process.env.EMAIL_HOST?.trim() || "smtp.gmail.com";
+const configuredPort = Number(process.env.EMAIL_PORT) || 587;
+const configuredSecure = process.env.EMAIL_SECURE === "true";
 
 console.log("📧 Mailer config check:");
 console.log("  EMAIL_USER =", JSON.stringify(emailUser));
@@ -24,23 +27,39 @@ if (!emailUser || !emailPass) {
   );
 }
 
-// ✅ Explicit Gmail SMTP config (works with app password)
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === "true", // false for 587, true for 465
+  host: emailHost,
+  port: configuredPort,
+  secure: configuredSecure,
+  requireTLS: true,
   auth: {
     user: emailUser,
     pass: emailPass,
   },
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 20000,
+  tls: {
+    servername: "smtp.gmail.com",
+    minVersion: "TLSv1.2",
+  },
 });
 
-// Optional: verify on server start
-transporter.verify((err, success) => {
+// Verify SMTP connectivity on startup so Render issues are visible in logs.
+transporter.verify((err) => {
   if (err) {
-    console.error("❌ Mailer verify failed:", err);
+    console.error("❌ SMTP connection failed:", {
+      host: emailHost,
+      port: configuredPort,
+      secure: configuredSecure,
+      code: err.code,
+      command: err.command,
+      message: err.message,
+    });
   } else {
-    console.log("✅ Mailer ready to send emails");
+    console.log(
+      `✅ SMTP connection ready: ${emailHost}:${configuredPort} secure=${configuredSecure}`
+    );
   }
 });
 
