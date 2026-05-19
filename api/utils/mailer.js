@@ -1,5 +1,5 @@
 // api/utils/mailer.js
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,24 +13,30 @@ dotenv.config({
   path: path.join(__dirname, "../../.env"),
 });
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: Number(process.env.EMAIL_PORT),
+  secure: process.env.EMAIL_SECURE === "true",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-// Default sender
 const FROM_EMAIL =
-  process.env.MAIL_FROM || "Gardenly <onboarding@resend.dev>";
+  process.env.MAIL_FROM || process.env.EMAIL_USER;
 
 /**
  * Send OTP email
  */
 export const sendOtpMail = async (to, otp) => {
   try {
-    await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to,
       subject: "Your Gardenly Order OTP",
       html: `
-        <div style="font-family: Arial, sans-serif; line-height:1.5;">
+        <div style="font-family: Arial, sans-serif; line-height: 1.5;">
           <h2>Gardenly Order Verification</h2>
           <p>Your OTP for confirming the order is:</p>
           <h1 style="letter-spacing: 4px;">${otp}</h1>
@@ -58,7 +64,7 @@ export const sendOtpMail = async (to, otp) => {
  */
 export const sendSignupVerificationMail = async (to, otp) => {
   try {
-    await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to,
       subject: "Verify your Gardenly account",
@@ -87,7 +93,7 @@ export const sendSignupVerificationMail = async (to, otp) => {
  */
 export const send2FAMail = async (to, otp) => {
   try {
-    await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to,
       subject: "Gardenly 2FA Login Code",
@@ -114,12 +120,13 @@ export const send2FAMail = async (to, otp) => {
  */
 export const sendMail = async (to, subject, text) => {
   try {
-    await resend.emails.send({
+    await transporter.sendMail({
       from: FROM_EMAIL,
       to,
       subject,
+      text,
       html: `
-        <div style="font-family: Arial, sans-serif; line-height:1.5; white-space: pre-wrap;">
+        <div style="font-family: Arial, sans-serif; line-height: 1.5; white-space: pre-wrap;">
           ${text}
         </div>
       `,
