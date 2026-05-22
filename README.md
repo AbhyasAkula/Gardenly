@@ -1,138 +1,274 @@
-<div align="center">
-  <img src="https://img.icons8.com/?size=100&id=103424&format=png&color=16A34A" alt="Gardenly Logo" width="80" height="80">
-  <h1 align="center">Gardenly</h1>
-  <p align="center">
-    <strong>Bring Nature Closer to Home 🌿</strong>
-    <br />
-    An Enterprise-Grade B2B & B2C MERN E-Commerce Platform
-  </p>
+# Gardenly
 
-  <p align="center">
-    <a href="#features">Features</a> •
-    <a href="#tech-stack">Tech Stack</a> •
-    <a href="#architecture-highlights">Architecture</a> •
-    <a href="#quick-start">Quick Start</a> •
-    <a href="#api-documentation">API Docs</a>
-  </p>
-</div>
+Gardenly is a full-stack MERN e-commerce platform built for gardening products and services. It supports role-based workflows for buyers and sellers, secure authentication, OTP-based account actions, image uploads, cart and order management, and cloud-based deployment.
 
----
+## Project Overview
 
-## 📖 About The Project
+Gardenly is designed as a practical multi-role commerce application where users can browse products, create accounts, manage carts, place orders, and verify sensitive actions through OTP-based email flows. Sellers can manage listings, while buyers can complete purchases securely through the same platform.
 
-**Gardenly** is a comprehensive, high-performance web application designed for gardening enthusiasts, commercial sellers, and botanical experts. It bridges the gap between buyers looking for premium plants/seeds and sellers wanting to expand their reach, while also providing a real-time community hub and expert ticketing system.
+The project focuses on clean full-stack integration across frontend, backend, database, authentication, media storage, email delivery, CI/CD, and deployment.
 
-This project was built focusing on **Enterprise Architecture**, prioritizing performance optimization, caching, microservice-like integration, and beautiful UX.
+## Highlights
 
-## ✨ Features
+- Full-stack MERN e-commerce platform
+- JWT + Google OAuth authentication
+- OTP verification using Brevo Email API
+- Role-based Buyer/Seller workflows
+- CI/CD with GitHub Actions
+- Docker build verification
+- Production deployment using Vercel + Render
 
-- **Multi-Role System (B2B & B2C):** Dedicated dashboards and permissions for `Buyers`, `Sellers`, `Experts`, and `Admin`.
-- **Lightning Fast Search:** Integrated **Apache Solr** for highly relevant, typo-tolerant, enterprise-level product searching.
-- **Real-Time Community:** Built-in forums and chat functionality powered by **Socket.io**.
-- **Performance Optimized:** API response caching implemented using **Redis**, reducing load times by ~78%.
-- **Secure Authentication:** Cookie-based JWT authentication paired with secure **Google OAuth** login.
-- **Custom Requests:** A dynamic marketplace where buyers can post custom requirements and sellers can bid/submit proposals.
-- **Expert Support System:** An integrated ticketing system allowing users to get help directly from assigned gardening experts.
-- **Cloud Media Storage:** Direct integration with **Cloudinary** for lightning-fast, optimized image delivery.
-- **Beautiful UI/UX:** Fully responsive, premium design with Dark/Light mode, built with **Tailwind CSS**.
+## Live Deployment
 
-## 🛠 Tech Stack
+- Frontend: https://gardenly-flame.vercel.app
+- Backend: https://gardenly-backend.onrender.com
 
-**Frontend:**
-- React.js (Vite)
-- Redux Toolkit & Context API (State Management)
-- Tailwind CSS (Styling)
-- React Router DOM (Routing)
-- Swiper.js (Touch Sliders)
-- Google Identity Services
+## Features
 
-**Backend:**
-- Node.js & Express.js
-- MongoDB & Mongoose (Database & ORM)
-- Redis (In-memory caching via Upstash)
-- Apache Solr (Search Engine via WebSolr)
-- Socket.io (WebSockets)
-- Swagger / OpenAPI (API Documentation)
-- JSON Web Tokens (JWT)
+- JWT-based authentication
+- Google OAuth login
+- Role-based access system
+- Buyer and seller workflows
+- Signup OTP email verification
+- Forgot password OTP flow
+- Order OTP verification flow
+- Product management
+- Cart management
+- Order placement and tracking
+- Cloudinary image upload integration
+- Secure cookie-based auth handling
+- MongoDB Atlas database integration
+- Production deployment on Vercel and Render
 
-**DevOps & Infrastructure:**
-- Docker & Docker Compose
-- GitHub Actions (CI/CD Pipeline)
-- Vercel (Frontend Deployment)
-- Render/Railway (Backend Deployment)
+## Tech Stack
 
-## 🏗 Architecture Highlights
+### Frontend
+- React
+- Vite
+- React Router
+- Redux Toolkit
+- Tailwind CSS
 
-- **Database Optimization:** Strategic indexing on high-traffic fields (`username`, `role`, `category`) resulting in `IXSCAN` operations over expensive `COLLSCAN`s.
-- **Caching Layer:** Custom Express middleware intercepting read-heavy routes to serve cached payloads from Redis.
-- **Containerization:** Separate Dockerfiles for client and backend, with a unified `docker-compose.yml` for isolated local development.
-- **Test-Driven:** Comprehensive unit testing using Jest/Vitest for critical controllers and logic.
+### Backend
+- Node.js
+- Express.js
+- Mongoose
 
-## 🚀 Quick Start
+### Database
+- MongoDB Atlas
+
+### Authentication
+- JWT
+- Google OAuth
+- Email OTP verification
+
+### Media & Email Services
+- Cloudinary
+- Brevo Email API
+
+### Deployment
+- Vercel
+- Render
+
+### CI/CD
+- GitHub Actions
+- Frontend checks
+- Backend checks
+- Docker build verification
+
+### Containerization
+- Docker
+- Docker Compose
+
+## Architecture
+
+Gardenly follows a frontend-backend-service architecture:
+
+- The React frontend on Vercel handles the UI, routing, forms, and user interactions.
+- The Express backend on Render exposes APIs for authentication, products, carts, orders, and OTP workflows.
+- MongoDB Atlas stores users, products, carts, and order data.
+- Cloudinary handles image storage for uploaded assets.
+- Brevo Email API is used for OTP delivery over HTTPS.
+
+High-level flow:
+
+Frontend -> Backend API -> MongoDB Atlas / Cloudinary / Brevo
+
+## CI/CD
+
+This project uses GitHub Actions for validation before deployment.
+
+Current pipeline:
+- `frontend-checks`
+  - install frontend dependencies
+  - run lint
+  - run tests
+  - run production build validation
+- `backend-checks`
+  - install backend/root dependencies
+  - run backend tests
+- `docker-build-verification`
+  - build backend Docker image
+  - build frontend Docker image
+
+Deployment flow:
+- Push code to GitHub
+- GitHub Actions runs validation checks
+- Vercel automatically deploys the frontend
+- Render automatically deploys the backend
+
+This setup helps catch frontend, backend, and Docker build issues early while keeping production deployment simple.
+
+## Docker
+
+Docker is included for containerization and build verification.
+
+This project is **not** deployed to production using Docker containers. Production deployment currently uses:
+- Vercel for the frontend
+- Render for the backend
+
+Docker is used here for:
+- local container-based setup
+- image build verification in CI
+- demonstrating portability of the application
+
+## Project Structure
+
+```text
+Gardenly/
+├── api/                  # Backend source code
+├── client/               # Frontend source code
+├── .github/workflows/    # GitHub Actions CI
+├── Dockerfile.backend
+├── Dockerfile.client
+├── docker-compose.yml
+├── package.json          # Root/backend package config
+└── README.md
+```
+
+## Local Setup
 
 ### Prerequisites
-- Node.js (v16+)
-- MongoDB instance (Local or Atlas)
-- Redis instance (Local or Upstash)
-- Docker (Optional, for containerized run)
+- Node.js 20+
+- npm
+- MongoDB Atlas connection string or local MongoDB
+- Cloudinary account
+- Google OAuth credentials
+- Brevo API credentials
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/SriHarshaRajuY/GardenlyReact.git
-cd GardenlyReact
+git clone <your-repo-url>
+cd Gardenly
 ```
 
-### 2. Environment Variables
-Create a `.env` file in the root directory. Use `.env.example` as a template and fill in your credentials for:
-- `MONGO_URI`
-- `REDIS_URL`
-- `VITE_GOOGLE_CLIENT_ID`
-- `CLOUD_NAME`, `CLOUD_API_KEY`, `CLOUD_API_SECRET`
-
-### 3. Run Locally (Standard)
-
-**Backend:**
+### 2. Install backend/root dependencies
 ```bash
-cd api
 npm install
-npm start
 ```
 
-**Frontend:**
+### 3. Install frontend dependencies
 ```bash
 cd client
 npm install
+cd ..
+```
+
+### 4. Create environment variables
+Create a `.env` file in the project root and use placeholder values based on the example below.
+
+### 5. Run the backend
+```bash
 npm run dev
 ```
 
-### 4. Run via Docker
+### 6. Run the frontend
+Open a second terminal:
 ```bash
-docker-compose up --build
+cd client
+npm run dev
 ```
-*Frontend will be available at `http://localhost:5173` and Backend at `http://localhost:3000`.*
 
-## 📚 API Documentation
+### 7. Open locally
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
-Gardenly uses **Swagger UI** for interactive API documentation. 
-Once the backend server is running, navigate to:
+## Environment Variables
 
-```text
-http://localhost:3000/api-docs
+Use placeholders only. Do not commit real secrets.
+
+```env
+MONGO_URI=your_mongodb_connection_string
+PORT=3000
+NODE_ENV=development
+
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+JWT_SECRET=your_jwt_secret
+
+BREVO_API_KEY=your_brevo_api_key
+MAIL_FROM_EMAIL=your_verified_brevo_email
+MAIL_FROM_NAME=Gardenly
+
+CLOUD_NAME=your_cloudinary_cloud_name
+CLOUD_API_KEY=your_cloudinary_api_key
+CLOUD_API_SECRET=your_cloudinary_api_secret
+
+CLIENT_ORIGIN=http://localhost:5173
 ```
-Here you can explore all endpoints, required payloads, and test requests directly from the browser.
 
-## 🧪 Testing
+## Available Scripts
 
-To run the automated test suite and view coverage:
+### Root / Backend
 ```bash
+npm run dev
+npm start
 npm test
+npm run test:coverage
 ```
 
-## 📄 License
+### Frontend
+```bash
+cd client
+npm run dev
+npm run build
+npm run test
+npm run test:coverage
+npm run lint
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Screenshots
 
----
-<div align="center">
-  <i>Developed with ❤️ by the Gardenly Team</i>
-</div>
+> Add screenshots here for better project presentation.
+
+Suggested screenshots:
+- Homepage
+- Login / Signup
+- Product page
+- Cart page
+- Order flow
+- Seller dashboard
+
+## Future Improvements
+
+- Add seller analytics dashboard
+- Add payment gateway integration for online checkout
+- Add stronger test coverage for auth and order edge cases
+- Add API rate limiting and request monitoring
+- Add product reviews and ratings workflow
+- Add admin reporting and moderation tools
+- Add screenshot gallery and short demo video
+- Add infrastructure configuration for easier environment setup
+
+## Why This Project Matters
+
+Gardenly demonstrates practical full-stack engineering across:
+- authentication
+- REST API development
+- database integration
+- OTP/email workflows
+- image upload handling
+- CI/CD automation
+- cloud deployment
+- Docker-based build verification
+
+
