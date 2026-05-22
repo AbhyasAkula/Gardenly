@@ -22,9 +22,6 @@ export const sendOrderOtp = async (req, res, next) => {
     req.body;
 
   try {
-    console.log("🚀 sendOrderOtp called");
-    console.log("req.user =", req.user);
-
     // Basic billing validation
     if (!fullName || !phone || !address1 || !city || !state || !pincode) {
       return next(
@@ -36,9 +33,6 @@ export const sendOrderOtp = async (req, res, next) => {
     const cart = await Cart.findOne({ user_id: req.user.id }).populate(
       "items.product"
     );
-
-    console.log("cart found =", !!cart);
-    console.log("cart items =", cart?.items?.length);
 
     if (!cart || !cart.items || cart.items.length === 0) {
       return next(errorHandler(400, "Your cart is empty."));
@@ -109,8 +103,6 @@ export const sendOrderOtp = async (req, res, next) => {
 
     // 4. Get user (for email)
     const user = await User.findById(req.user.id);
-    console.log("user found =", !!user);
-    console.log("user email =", user?.email);
     if (!user) return next(errorHandler(404, "User not found."));
 
     const otp = generateOtp();
@@ -131,9 +123,7 @@ export const sendOrderOtp = async (req, res, next) => {
     await order.save();
 
     // 6. Send OTP
-    console.log("sending order OTP email...");
     await sendOtpMail(user.email, otp);
-    console.log("✅ order OTP email sent");
 
     res.status(200).json({
       success: true,

@@ -2,7 +2,20 @@ import { jest } from '@jest/globals';
 
 // Setup Mocks Before Imports
 jest.unstable_mockModule('../models/user.model.js', () => {
+  const USER_ROLES = {
+    BUYER: 'Buyer',
+    SELLER: 'Seller',
+    ADMIN: 'Admin',
+    EXPERT: 'Expert'
+  };
+
   return {
+    USER_ROLES,
+    PUBLIC_SIGNUP_ROLE_VALUES: [
+      USER_ROLES.BUYER,
+      USER_ROLES.SELLER,
+      USER_ROLES.EXPERT
+    ],
     default: {
       findOne: jest.fn(),
       create: jest.fn(),
